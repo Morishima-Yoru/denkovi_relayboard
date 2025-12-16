@@ -121,12 +121,14 @@ control_denkovi --board denkovi_16ch --backend vcp --serial DAE006E8 --relay 1 2
 - Denkovi 16 Channel USB Relay Board
 
 ## Note
-* It is recommand to use PyFtdi backend if the operation system is Linux, and FTD2XX backend in Windows.
-* When using FTD2XX backend in Linux, you need to install the FTDI D2XX driver and `sudo rmmod ftdi_sio` first.
-For more information, please refer to the [FTDI D2XX for Linux](https://ftdichip.com/Driver/D2XX/Linux/ReadMe.txt).
-* When using PyFtdi backend in Windows, you need to install `libusb-win32` to the device with Zadig first.
-For more information, please refer to the [PyFtdi Installation](https://eblot.github.io/pyftdi/installation.html).
-
+### About backend selection
+  * It is recommand to use PyFtdi backend if the operation system is Linux, and FTD2XX backend in Windows.
+  * When using FTD2XX backend in Linux, you need to install the FTDI D2XX driver and `sudo rmmod ftdi_sio` first.
+  For more information, please refer to the [FTDI D2XX for Linux](https://ftdichip.com/Driver/D2XX/Linux/ReadMe.txt).
+  * When using PyFtdi backend in Windows, you need to install `libusb-win32` to the device with Zadig first.
+  For more information, please refer to the [PyFtdi Installation](https://eblot.github.io/pyftdi/installation.html).
+  * Only 16 Channel Relay support vcp backend. For other boards, please use mcp2200, ftd2xx or pyftdi backend rather than follow the `list_potential_device` output.
+  
 ## License
 
 MIT License
