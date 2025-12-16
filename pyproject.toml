@@ -1,0 +1,48 @@
+[project]
+name = "denkovi-relayboard"
+version = "0.0.0"
+description = "Control Denkovi USB relay boards via FTDI / HID backends"
+readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "pyftdi>=0.53.3",
+    "pyserial>=3.5",
+    "typing_extensions>=4.0.0",
+]
+
+[project.scripts]
+list_potential_device = "denkovi_relayboard.cli.list_devices:main"
+control_denkovi = "denkovi_relayboard.cli.control:main"
+
+[dependency-groups]
+dev = [
+    "denkovi-relayboard",
+    "ruff",
+    "flake8",
+    "mypy",
+    "types-pyserial",
+]
+
+[tool.uv.sources]
+denkovi-relayboard = { workspace = true }
+
+[tool.ruff]
+line-length = 120
+exclude = ["src/denkovi_relayboard/hid"]
+
+[tool.mypy]
+ignore_missing_imports = true
+exclude = ["src/denkovi_relayboard/hid"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
