@@ -69,7 +69,7 @@ class RelayBoardFactory:
             timeout (int): The timeout of the device.
 
         Returns:
-            IDenkoviRelayBoard: A relay board instance.
+            IDenkoviRelayBoard: A relay board instance. Call ``connect()`` before use.
 
         Raises:
             ValueError: If the backend type or board type is not supported.

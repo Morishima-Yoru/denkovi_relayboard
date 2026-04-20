@@ -28,12 +28,20 @@ class DenkoviRelayBoard16Ch(IDenkoviRelayBoard):
         serial_number: Optional[str] = None,
         timeout: int = 5000,
     ) -> None:
+        self._backend_inst = backend
+        self._device_address = device_address
+        self._serial_number = serial_number
+        self._timeout = timeout
         self.backend: Optional[AcceptableBackendT] = None
-        self.backend = backend
+
+    def connect(self) -> None:
+        if self.backend is not None:
+            raise RuntimeError("Backend is already connected")
+        self.backend = self._backend_inst
         self.backend.open(
-            device_address=device_address,
-            serial_number=serial_number,
-            timeout=timeout,
+            device_address=self._device_address,
+            serial_number=self._serial_number,
+            timeout=self._timeout,
         )
 
     def set_all_states_on(self) -> None:

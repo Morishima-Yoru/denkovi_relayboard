@@ -37,6 +37,7 @@ def main():
         return
 
     try:
+        board.connect()
         print(f"Connected! Serial Number: {board.get_serial_number()}")
         
         # Turn off all relays initially

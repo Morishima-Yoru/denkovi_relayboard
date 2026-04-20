@@ -7,6 +7,17 @@ from .structures import DiscoveredDevice
 
 class IDenkoviRelayBoard(ABC):
     @abstractmethod
+    def connect(self) -> None:
+        """
+        Open the connection to the relay board.
+
+        Must be called before any other operation.
+
+        Raises:
+            RuntimeError: If the backend is already connected.
+        """
+
+    @abstractmethod
     def get_serial_number(self) -> str:
         """
         Get the serial number of the relay board.

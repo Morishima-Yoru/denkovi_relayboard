@@ -26,7 +26,6 @@ control_denkovi = "denkovi_relayboard.cli.control:main"
 [dependency-groups]
 dev = [
     "denkovi-relayboard",
-    "ruff",
     "flake8",
     "mypy",
     "types-pyserial",
@@ -46,3 +45,18 @@ exclude = ["src/denkovi_relayboard/hid"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.flake8]
+extend-ignore = [
+    "W291",
+    "W292", 
+    "W293",
+    "W503", 
+    "E125", 
+    "E129", 
+    "E203", 
+    "E501", 
+    "F401", 
+    "F821",
+]
+exclude = [".git", "__pycache__", "build", "dist", ".eggs", ".venv", ".demo", hid]

@@ -18,12 +18,20 @@ class DenkoviRelayBoard4ChMCP2200(IDenkoviRelayBoard):
         serial_number: Optional[str] = None,
         timeout: int = 5000,
     ) -> None:
+        self._backend_inst = backend
+        self._device_address = device_address
+        self._serial_number = serial_number
+        self._timeout = timeout
         self.backend: Optional[MCP2200Backend] = None
-        self.backend = backend
+
+    def connect(self) -> None:
+        if self.backend is not None:
+            raise RuntimeError("Backend is already connected")
+        self.backend = self._backend_inst
         self.backend.open(
-            device_address=device_address,
-            serial_number=serial_number,
-            timeout=timeout
+            device_address=self._device_address,
+            serial_number=self._serial_number,
+            timeout=self._timeout,
         )
 
     def get_serial_number(self) -> str:
@@ -120,24 +128,41 @@ class DenkoviRelayBoard4ChFT422(IDenkoviRelayBoard):
         serial_number: Optional[str] = None,
         timeout: int = 5000,
     ) -> None:
-        self.backend: FTD2XXBackend = backend
+        self._backend_inst = backend
+        self._device_address = device_address
+        self._serial_number = serial_number
+        self._timeout = timeout
+        self.backend: Optional[FTD2XXBackend] = None
+
+    def connect(self) -> None:
+        if self.backend is not None:
+            raise RuntimeError("Backend is already connected")
+        self.backend = self._backend_inst
         self.backend.open(
-            device_address=device_address,
-            serial_number=serial_number,
-            timeout=timeout,
+            device_address=self._device_address,
+            serial_number=self._serial_number,
+            timeout=self._timeout,
         )
         self.backend.set_bit_mode(self.BIT_MASK, self.FT_SYNCHRONOUS_BIT_BANG_MODE)
 
     def get_serial_number(self) -> str:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         return self.backend.get_serial_number()
 
     def set_all_states_on(self) -> None:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         self.backend.write(b"\xff")
 
     def set_all_states_off(self) -> None:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         self.backend.write(b"\x00")
 
     def set_state(self, logic: bool, *addr: int) -> None:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         addr_ = set(addr)
         self.__integrity_check(addr_)
         original_states: Tuple[bool, ...] = self.get_all_states()
@@ -150,6 +175,8 @@ class DenkoviRelayBoard4ChFT422(IDenkoviRelayBoard):
         self.backend.write(encoded_states)
 
     def set_clear_state(self, logic: bool, *addr: int) -> None:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         addr_ = set(addr)
         self.__integrity_check(addr_)
         if not logic:
@@ -165,17 +192,24 @@ class DenkoviRelayBoard4ChFT422(IDenkoviRelayBoard):
         self.backend.write(encoded_states)
 
     def get_state(self, addr: int) -> bool:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         return self.backend.get_bit_mode() & (1 << (addr - 1)) != 0
 
     def get_all_states(self) -> Tuple[bool, ...]:
+        if self.backend is None:
+            raise RuntimeError("Backend is not open")
         states_ = self.backend.get_bit_mode()
         return tuple(states_ & (1 << i) != 0 for i in range(8))
 
     def close(self) -> None:
-        self.backend.close()
+        if self.backend is not None:
+            self.backend.close()
+            self.backend = None
 
     def __del__(self) -> None:
-        self.close()
+        with suppress(Exception):
+            self.close()
 
     def __integrity_check(self, states: Set[int]) -> None:
         if any(state < 1 or state > 4 for state in states):
